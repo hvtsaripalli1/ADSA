@@ -1,0 +1,64 @@
+> HSET employee:1 Department "IT" Nationality "Czech" SalaryGroup 12 
+(integer) 3
+
+> HGETALL employee:1 
+1) "Department"
+2) "IT"
+3) "Nationality"
+4) "Czech"
+5) "SalaryGroup"
+6) "12"
+
+> HGET employee:1 Department 
+"IT"
+
+> HSET employee:1 SalaryGroup 13 
+(integer) 0
+
+
+> HGETALL employee:1
+1) "Department"
+2) "IT"
+3) "Nationality"
+4) "Czech"
+5) "SalaryGroup"
+6) "13"
+
+> HSET employee:1 Department "CS"
+(integer) 0
+
+> HGETALL employee:1
+1) "Department"
+2) "CS"
+3) "Nationality"
+4) "Czech"
+5) "SalaryGroup"
+6) "13"
+
+> HDEL employee:1 SalaryGroup 
+(integer) 1
+
+> HGETALL employee:1
+1) "Department"
+2) "CS"
+3) "Nationality"
+4) "Czech"
+
+> HEXISTS employee:1 Department 
+(integer) 1
+
+> HLEN employee:1 
+(integer) 2
+
+> DEL employee:1 
+(integer) 1
+
+> HGETALL employee:1
+(empty list or set)
+
+
+> HSET employee:1 SalaryGroup 12
+(integer) 0
+
+> HINCRBY employee:1 SalaryGroup 3 
+(integer) 15
