@@ -62,3 +62,47 @@
 
 > HINCRBY employee:1 SalaryGroup 3 
 (integer) 15
+
+
+SET name Hema
+GET name
+DEL name
+EXISTS name
+
+SET count 0
+INCR count
+INCR count
+GET count
+
+
+DECR count
+GET count
+
+SET session_id abc123 EX 10
+GET session_id
+
+TTL session_id
+
+SET name Hema
+SET name Varshini(SET always overwrites existing values)
+GET name
+>Varshini
+
+SET score 10
+GETSET score 20
+>10
+
+GET score
+>20
+
+DEL lock(SYNTAX : SET key value NX)
+
+SET lock 1 NX
+GET lock
+
+SET lock 2 NX
+GET lock
+
+SET lock 2 XX
+GET lock
+
