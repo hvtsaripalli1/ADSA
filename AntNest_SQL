@@ -1,0 +1,51 @@
+/* 
+QUESTION:
+What is the id, name, type, and number of shifts of the most diligent ant
+(ant with the highest number of shifts)?
+Write id, name, type name, and number of shifts.
+*/
+
+SELECT TOP 1
+    a.Id AS AntId,
+    a.Name AS AntName,
+    t.Name AS TypeName,
+    COUNT(s.Date) AS NumberOfShifts
+FROM Ant a
+JOIN Shift s
+    ON a.Id = s.Ant
+JOIN Type t
+    ON a.Type = t.Code
+GROUP BY
+    a.Id,
+    a.Name,
+    t.Name
+ORDER BY
+    COUNT(s.Date) DESC;
+
+
+-- Question:
+-- What customer or customers have the highest number of sales
+-- in the 2nd fiscal semester of all years (based on OrderDate)?
+-- Write the last name of the customer and the number of sales.
+
+-- Find customers with the highest number of sales
+-- in the 2nd fiscal semester across all years
+
+WITH SalesInSecondSemester AS (
+    SELECT
+        c.LastName,
+        COUNT(*) AS NumberOfSales
+    FROM FactInternetSales fis
+    JOIN DimCustomer c
+        ON fis.CustomerKey = c.CustomerKey
+    JOIN DimDate d
+        ON fis.OrderDateKey = d.DateKey
+    WHERE d.FiscalSemester = 2
+    GROUP BY c.LastName
+)
+
+SELECT TOP 1
+    LastName,
+    NumberOfSales
+FROM SalesInSecondSemester
+ORDER BY NumberOfSales DESC;
