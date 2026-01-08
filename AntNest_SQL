@@ -24,28 +24,151 @@ ORDER BY
 
 
 -- Question:
--- What customer or customers have the highest number of sales
--- in the 2nd fiscal semester of all years (based on OrderDate)?
--- Write the last name of the customer and the number of sales.
-
--- Find customers with the highest number of sales
--- in the 2nd fiscal semester across all years
-
-WITH SalesInSecondSemester AS (
-    SELECT
-        c.LastName,
-        COUNT(*) AS NumberOfSales
-    FROM FactInternetSales fis
-    JOIN DimCustomer c
-        ON fis.CustomerKey = c.CustomerKey
-    JOIN DimDate d
-        ON fis.OrderDateKey = d.DateKey
-    WHERE d.FiscalSemester = 2
-    GROUP BY c.LastName
-)
+-- Which customer has the highest number of sales overall?
+-- Write the customer's last name and number of sales.
 
 SELECT TOP 1
-    LastName,
-    NumberOfSales
-FROM SalesInSecondSemester
+    c.LastName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimCustomer c
+    ON fis.CustomerKey = c.CustomerKey
+GROUP BY c.LastName
 ORDER BY NumberOfSales DESC;
+
+
+-- Question:
+-- What customer has the highest number of sales
+-- in the 2nd fiscal semester across all years?
+
+SELECT TOP 1
+    c.LastName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimCustomer c
+    ON fis.CustomerKey = c.CustomerKey
+JOIN DimDate d
+    ON fis.OrderDateKey = d.DateKey
+WHERE d.FiscalSemester = 2
+GROUP BY c.LastName
+ORDER BY NumberOfSales DESC;
+
+
+-- Question:
+-- Which product has the highest number of sales?
+-- Write product name and number of sales.
+
+SELECT TOP 1
+    p.EnglishProductName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimProduct p
+    ON fis.ProductKey = p.ProductKey
+GROUP BY p.EnglishProductName
+ORDER BY NumberOfSales DESC;
+
+
+-- Question:
+-- Which product category has the highest number of sales?
+
+SELECT TOP 1
+    pc.EnglishProductCategoryName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimProduct p
+    ON fis.ProductKey = p.ProductKey
+JOIN DimProductSubcategory psc
+    ON p.ProductSubcategoryKey = psc.ProductSubcategoryKey
+JOIN DimProductCategory pc
+    ON psc.ProductCategoryKey = pc.ProductCategoryKey
+GROUP BY pc.EnglishProductCategoryName
+ORDER BY NumberOfSales DESC;
+
+
+-- Question:
+-- Which sales territory has the highest number of sales?
+
+SELECT TOP 1
+    st.SalesTerritoryRegion,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimSalesTerritory st
+    ON fis.SalesTerritoryKey = st.SalesTerritoryKey
+GROUP BY st.SalesTerritoryRegion
+ORDER BY NumberOfSales DESC;
+
+
+
+-- Question:
+-- Which year has the highest number of sales?
+
+SELECT TOP 1
+    d.CalendarYear,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimDate d
+    ON fis.OrderDateKey = d.DateKey
+GROUP BY d.CalendarYear
+ORDER BY NumberOfSales DESC;
+
+
+-- Question:
+-- Which month has the highest total sales amount?
+
+SELECT TOP 1
+    d.EnglishMonthName,
+    SUM(fis.SalesAmount) AS TotalSales
+FROM FactInternetSales fis
+JOIN DimDate d
+    ON fis.OrderDateKey = d.DateKey
+GROUP BY d.EnglishMonthName
+ORDER BY TotalSales DESC;
+
+
+-- Question:
+-- Which customer generated the highest total sales amount?
+
+SELECT TOP 1
+    c.LastName,
+    SUM(fis.SalesAmount) AS TotalSales
+FROM FactInternetSales fis
+JOIN DimCustomer c
+    ON fis.CustomerKey = c.CustomerKey
+GROUP BY c.LastName
+ORDER BY TotalSales DESC;
+
+
+
+-- Question:
+-- Which promotion resulted in the highest number of sales?
+
+SELECT TOP 1
+    p.EnglishPromotionName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimPromotion p
+    ON fis.PromotionKey = p.PromotionKey
+GROUP BY p.EnglishPromotionName
+ORDER BY NumberOfSales DESC;
+
+
+-- Question:
+-- For which product is "Review" the most popular reason to buy?
+-- Write product name and number of sales.
+
+SELECT TOP 1
+    p.EnglishProductName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSalesReason fr
+JOIN DimSalesReason sr
+    ON fr.SalesReasonKey = sr.SalesReasonKey
+JOIN FactInternetSales fis
+    ON fr.SalesOrderNumber = fis.SalesOrderNumber
+JOIN DimProduct p
+    ON fis.ProductKey = p.ProductKey
+WHERE sr.SalesReasonName = 'Review'
+GROUP BY p.EnglishProductName
+ORDER BY NumberOfSales DESC;
+
+
+
